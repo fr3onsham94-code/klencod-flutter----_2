@@ -10,7 +10,7 @@ void main(){ WidgetsFlutterBinding.ensureInitialized(); SystemChrome.setPreferre
 const gold=Color(0xFFFFD56A), goldDark=Color(0xFFB98224), navy=Color(0xFF06132F), panel=Color(0xFF102B59), blue=Color(0xFF174A91);
 const prizes=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
 class Q { final String q; final List<String> a; final int c; const Q(this.q,this.a,this.c); }
-const qs=[
+const mediumQuestions=[
 Q('ما هي عاصمة سوريا؟',['حلب','دمشق','حمص','اللاذقية'],1),
 Q('كم عدد ألوان قوس قزح التقليدية؟',['5','6','7','8'],2),
 Q('ما هو الكوكب المعروف بالكوكب الأحمر؟',['الزهرة','المريخ','المشتري','عطارد'],1),
@@ -27,26 +27,90 @@ Q('ما أعمق نقطة معروفة في محيطات العالم؟',['خن�
 Q('أي عالم وضع المعادلات الأساسية للكهرومغناطيسية؟',['ماكسويل','مندليف','باستور','كبلر'],0),
 Q('ما العدد الأولي الوحيد الزوجي؟',['0','1','2','4'],2),
 ];
+const easyQuestions=[
+Q('ما لون السماء في يوم صافٍ؟',['أزرق','أخضر','أحمر','أسود'],0),
+Q('كم عدد أيام الأسبوع؟',['5','6','7','8'],2),
+Q('أي حيوان يُلقب بملك الغابة؟',['الفيل','الأسد','الحصان','الأرنب'],1),
+Q('كم عيناً لدى الإنسان عادةً؟',['1','2','3','4'],1),
+Q('ما اسم صغير القط؟',['جرو','مهر','هريرة','عجل'],2),
+Q('أي فاكهة لونها أصفر غالباً؟',['الموز','الفراولة','العنب الأسود','التوت'],0),
+Q('في أي فصل تتساقط أوراق كثير من الأشجار؟',['الصيف','الربيع','الخريف','الشتاء'],2),
+Q('كم دقيقة في الساعة؟',['30','45','60','90'],2),
+Q('أي وسيلة نقل تطير في السماء؟',['السفينة','الطائرة','الدراجة','القطار'],1),
+Q('ما عاصمة سوريا؟',['دمشق','حلب','حمص','طرطوس'],0),
+Q('أي حاسة نستخدمها لسماع الأصوات؟',['البصر','الشم','السمع','اللمس'],2),
+Q('ما الحيوان الذي يعطينا الحليب؟',['البقرة','النمر','الثعلب','الذئب'],0),
+Q('كم عدد أصابع اليد الواحدة؟',['4','5','6','10'],1),
+Q('ما الكوكب الذي نعيش عليه؟',['المريخ','الأرض','زحل','الزهرة'],1),
+Q('ما النجم الذي يضيء لنا نهاراً؟',['القمر','الشمس','الشعرى','القطب'],1),
+];
+const hardQuestions=[
+Q('ما عاصمة كازاخستان الحالية؟',['ألماتي','أستانا','طشقند','بيشكيك'],1),
+Q('ما العنصر الكيميائي الذي عدده الذري 74؟',['التنغستن','الرينيوم','الأوزميوم','التنتالوم'],0),
+Q('في أي عام انتهت حرب المئة عام؟',['1453','1492','1415','1517'],0),
+Q('من صاحب كتاب «المقدمة»؟',['ابن رشد','ابن خلدون','الفارابي','المسعودي'],1),
+Q('ما أكبر أقمار كوكب زحل؟',['أوروبا','غانيميد','تيتان','إنسيلادوس'],2),
+Q('ما وحدة قياس المقاومة الكهربائية؟',['الفولت','الأوم','الأمبير','الكولوم'],1),
+Q('أي مضيق يصل البحر الأسود ببحر مرمرة؟',['الدردنيل','هرمز','البوسفور','جبل طارق'],2),
+Q('من رسم لوحة «مدرسة أثينا»؟',['رافائيل','دافنشي','ميكيلانجيلو','كارافاجيو'],0),
+Q('ما الاسم旧ي لعنصر الصوديوم في بعض اللغات ورمزه Na؟',['Natrium','Kalium','Argentum','Ferrum'],0),
+Q('أي دولة تضم إقليم ترانسلفانيا التاريخي؟',['بلغاريا','رومانيا','المجر','صربيا'],1),
+Q('من العالم الذي صاغ مبدأ عدم اليقين؟',['نيلز بور','فيرنر هايزنبرغ','ماكس بلانك','إرفين شرودنغر'],1),
+Q('ما أعمق بحيرة في العالم؟',['فيكتوريا','بايكال','سوبيريور','تنغانيقا'],1),
+Q('ما اسم المعاهدة التي أنهت حرب الثلاثين عاماً عام 1648؟',['أوترخت','وستفاليا','فرساي','فيينا'],1),
+Q('أي رياضي ارتبط بثابت أفوجادرو؟',['أميديو أفوجادرو','جون دالتون','روبرت بويل','أنطوان لافوازييه'],0),
+Q('ما اسم أقدم ملحمة أدبية معروفة؟',['الإلياذة','جلجامش','الأوديسة','الإنيادة'],1),
+];
+const kidsQuestions=[
+Q('أي حيوان يقول «مواء»؟',['الكلب','القطة','البقرة','الحصان'],1),
+Q('كم عجلة للسيارة العادية؟',['2','3','4','6'],2),
+Q('ما لون الموز الناضج غالباً؟',['أزرق','أصفر','بنفسجي','أحمر'],1),
+Q('أي طائر لا يستطيع الطيران ويعيش في المناطق الباردة؟',['النسر','البطريق','العصفور','الحمامة'],1),
+Q('ماذا نشرب عندما نشعر بالعطش؟',['الرمل','الماء','الزيت','العصير فقط'],1),
+Q('كم عدد أرجل العنكبوت؟',['4','6','8','10'],2),
+Q('أي كوكب يُعرف بالكوكب الأحمر؟',['الأرض','المريخ','المشتري','نبتون'],1),
+Q('ماذا تعطينا النحلة؟',['الحليب','العسل','القطن','الخبز'],1),
+Q('أي عضو نستخدمه للتفكير؟',['القلب','الدماغ','المعدة','الركبة'],1),
+Q('ما اسم صغير الكلب؟',['جرو','مهر','حمل','كتكوت'],0),
+Q('أي من هذه وسائل المحافظة على نظافة الأسنان؟',['تنظيفها بالفرشاة','تركها دون تنظيف','أكل الحلوى دائماً','عدم شرب الماء'],0),
+Q('ما الفصل الذي تتفتح فيه أزهار كثيرة؟',['الشتاء','الخريف','الربيع','الصيف'],2),
+Q('أي حيوان يُسمى سفينة الصحراء؟',['الحصان','الجمل','الغزال','الدب'],1),
+Q('كم عدد ألوان إشارة المرور الأساسية؟',['2','3','4','5'],1),
+Q('ما الذي تحتاجه النباتات لتنمو؟',['الماء والضوء','الحجارة فقط','الدخان','البلاستيك'],0),
+];
+const questionSets={
+ 'سهل':easyQuestions,
+ 'متوسط':mediumQuestions,
+ 'صعب':hardQuestions,
+ 'الأطفال':kidsQuestions,
+};
 class MillionaireApp extends StatelessWidget { const MillionaireApp({super.key}); @override Widget build(BuildContext c)=>MaterialApp(title:'المليونير السوري',debugShowCheckedModeBanner:false,theme:ThemeData.dark(useMaterial3:true).copyWith(scaffoldBackgroundColor:navy,colorScheme:const ColorScheme.dark(primary:gold,secondary:gold,surface:panel)),home:const Game()); }
 
 class Game extends StatefulWidget { const Game({super.key}); @override State<Game> createState()=>_GameState(); }
 class _GameState extends State<Game> with SingleTickerProviderStateMixin {
- int n=0,seconds=30,safe=0; int? selected,hidden,hiddenSecond; bool locked=false,over=false,fifty=false,audience=false,friend=false,won=false; Timer? timer; late final pulse=AnimationController(vsync:this,duration:const Duration(milliseconds:900))..repeat(reverse:true);
- @override void initState(){super.initState();startClock();}
+ int n=0,seconds=30,safe=0; int? selected,hidden,hiddenSecond; bool locked=false,over=false,fifty=false,audience=false,friend=false,won=false,started=false; String selectedMode='متوسط'; Timer? timer;
+ List<Q> get questions => questionSets[selectedMode]!; late final pulse=AnimationController(vsync:this,duration:const Duration(milliseconds:900))..repeat(reverse:true);
+ @override void initState(){super.initState();}
  @override void dispose(){timer?.cancel();pulse.dispose();super.dispose();}
  void startClock(){timer?.cancel();seconds=30;timer=Timer.periodic(const Duration(seconds:1),(t){if(!mounted||locked||over){t.cancel();return;}setState(()=>seconds--);if(seconds<=0){t.cancel();finish(false);}});}
  String money(int v)=>v.toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'),(m)=>m[1]!+',');
  void choose(int i){if(locked||over||(hidden==i || hiddenSecond==i))return;setState(()=>selected=i);HapticFeedback.selectionClick();}
- Future<void> confirm() async {if(selected==null||locked)return;timer?.cancel();setState(()=>locked=true);await Future.delayed(const Duration(milliseconds:850));if(!mounted)return;if(selected==qs[n].c){if(n==4||n==9)safe=prizes[n];if(n==14){finish(true);return;}setState(()=>n++);selected=null;hidden=null;hiddenSecond=null;locked=false;startClock();}else{finish(false);}}
+ Future<void> confirm() async {if(selected==null||locked)return;timer?.cancel();setState(()=>locked=true);await Future.delayed(const Duration(milliseconds:850));if(!mounted)return;if(selected==questions[n].c){if(n==4||n==9)safe=prizes[n];if(n==14){finish(true);return;}setState(()=>n++);selected=null;hidden=null;hiddenSecond=null;locked=false;startClock();}else{finish(false);}}
  void finish(bool win){timer?.cancel();setState((){over=true;won=win;locked=true;});showDialog(context:context,barrierDismissible:false,builder:(d)=>AlertDialog(backgroundColor:panel,title:Text(win?'مبروك! ربحت المليون':'انتهت المسابقة'),content:Text(win?'أصبحت مليونيراً سورياً!':'الجائزة المضمونة: '+money(safe)),actions:[FilledButton(onPressed:(){Navigator.pop(d);restart();},child:const Text('العب من جديد'))]));}
  void cashOut(){if(over)return;timer?.cancel();setState((){over=true;locked=true;won=false;});showDialog(context:context,barrierDismissible:false,builder:(d)=>AlertDialog(backgroundColor:panel,title:const Text('انسحبت من المسابقة'),content:Text('مبروك! ربحت الجائزة المضمونة: '+money(safe)),actions:[FilledButton(onPressed:(){Navigator.pop(d);restart();},child:const Text('العب من جديد'))]));}
- void restart(){setState((){n=0;selected=null;hidden=null;hiddenSecond=null;safe=0;locked=false;over=false;fifty=false;audience=false;friend=false;won=false;});startClock();}
+ void restart(){timer?.cancel();setState((){n=0;selected=null;hidden=null;hiddenSecond=null;safe=0;locked=false;over=false;fifty=false;audience=false;friend=false;won=false;started=false;});}
+ void startGame(String mode){setState((){selectedMode=mode;n=0;selected=null;hidden=null;hiddenSecond=null;safe=0;locked=false;over=false;fifty=false;audience=false;friend=false;won=false;started=true;});startClock();}
+ Widget modeSelection(){
+   final modes=[('سهل','بداية ممتعة وأسئلة مباشرة','assets',Icons.sentiment_satisfied_alt),('متوسط','معلومات عامة وتحدٍ متوازن','متوسط',Icons.lightbulb_outline),('صعب','اختبر معلوماتك بأقوى الأسئلة','خبير',Icons.workspace_premium),('الأطفال','أسئلة لطيفة وممتعة للصغار','مرح',Icons.child_care)];
+   return Scaffold(body:SafeArea(child:Stack(children:[Positioned.fill(child:CustomPaint(painter:StagePainter())),Center(child:SingleChildScrollView(padding:const EdgeInsets.all(22),child:Column(mainAxisAlignment:MainAxisAlignment.center,children:[const Icon(Icons.stars_rounded,color:gold,size:54),const SizedBox(height:8),const Text('المليونير السوري',style:TextStyle(color:gold,fontSize:27,fontWeight:FontWeight.w900)),const SizedBox(height:8),const Text('اختر مستوى التحدي',style:TextStyle(color:Colors.white,fontSize:18,fontWeight:FontWeight.bold)),const SizedBox(height:24),...modes.map((m)=>Padding(padding:const EdgeInsets.only(bottom:12),child:InkWell(borderRadius:BorderRadius.circular(18),onTap:()=>startGame(m.$1),child:Container(padding:const EdgeInsets.symmetric(horizontal:18,vertical:17),decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xFF1B4787),Color(0xFF091B3B)]),borderRadius:BorderRadius.circular(18),border:Border.all(color:goldDark,width:1.4),boxShadow:const [BoxShadow(color:Color(0x55000000),blurRadius:12,offset:Offset(0,5))]),child:Row(children:[Icon(m.$4,color:gold,size:31),const SizedBox(width:15),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(m.$1,style:const TextStyle(color:gold,fontSize:19,fontWeight:FontWeight.w900)),const SizedBox(height:4),Text(m.$2,style:const TextStyle(color:Colors.white70,fontSize:13))])),const Icon(Icons.arrow_back_ios_new,color:gold,size:18)]))))),const SizedBox(height:10),const Text('15 سؤالاً • ثلاث وسائل مساعدة • الجائزة الكبرى مليون',textAlign:TextAlign.center,style:TextStyle(color:Colors.white54,fontSize:12))])))]))));
+ }
  void useFifty(){if(fifty||locked)return;final wrong=List.generate(4,(i)=>i).where((i)=>i!=qs[n].c).toList()..shuffle();setState((){fifty=true;hidden=wrong.take(2).first; hiddenSecond=wrong[1];});}
  void useAudience(){if(audience||locked)return;setState(()=>audience=true);final r=math.Random();final vals=List<int>.filled(4,0);final correct=65+r.nextInt(16);final wrong=[for(var i=0;i<4;i++) if(i!=qs[n].c)i]..shuffle();final remaining=100-correct;final first= r.nextInt(remaining+1);final second=r.nextInt(remaining-first+1);vals[qs[n].c]=correct;vals[wrong[0]]=first;vals[wrong[1]]=second;vals[wrong[2]]=remaining-first-second;showDialog(context:context,builder:(d)=>AlertDialog(backgroundColor:panel,title:const Text('تصويت الجمهور'),content:Column(mainAxisSize:MainAxisSize.min,children:List.generate(4,(i)=>Padding(padding:const EdgeInsets.all(5),child:Row(children:[Text(String.fromCharCode(65+i)),const SizedBox(width:8),Expanded(child:LinearProgressIndicator(value:vals[i]/100,minHeight:10,color:gold,backgroundColor:navy)),Text(' '+vals[i].toString()+'%')])))),actions:[TextButton(onPressed:()=>Navigator.pop(d),child:const Text('إغلاق'))]));}
  void useFriend(){if(friend||locked)return;setState(()=>friend=true);final c=qs[n].c;final g=math.Random().nextInt(100)<78?c:(c+1+math.Random().nextInt(3))%4;showDialog(context:context,builder:(d)=>AlertDialog(backgroundColor:panel,title:const Text('الاتصال بصديق'),content:Text('أعتقد أن الإجابة هي '+String.fromCharCode(65+g)+' — '+qs[n].a[g]),actions:[TextButton(onPressed:()=>Navigator.pop(d),child:const Text('شكراً'))]));}
  Color answerColor(int i){if(locked&&i==qs[n].c)return Colors.green.shade800;if(locked&&selected==i)return Colors.red.shade900;if(selected==i)return const Color(0xFF8C611D);return const Color(0xFF12366E);}
  @override
  Widget build(BuildContext context) {
+   if(!started)return modeSelection();
    return Scaffold(
      body: SafeArea(
        child: Stack(
@@ -82,7 +146,7 @@ class _GameState extends State<Game> with SingleTickerProviderStateMixin {
                        onPressed: () => showDialog(context: context, builder: (d) => AlertDialog(
                          backgroundColor: panel,
                          title: const Text('قواعد اللعبة'),
-                         content: const Text('15 سؤالاً متدرجاً، 30 ثانية لكل سؤال، وثلاث وسائل مساعدة. يمكنك الانسحاب في أي وقت.'),
+                         content: const Text('النمط: $selectedMode. 15 سؤالاً متدرجاً، 30 ثانية لكل سؤال، وثلاث وسائل مساعدة. يمكنك الانسحاب في أي وقت.'),
                          actions: [TextButton(onPressed: () => Navigator.pop(d), child: const Text('حسناً'))],
                        )),
                        icon: const Icon(Icons.help_outline, color: gold),
@@ -102,7 +166,7 @@ class _GameState extends State<Game> with SingleTickerProviderStateMixin {
                    child: const Icon(Icons.workspace_premium, color: navy, size: 40),
                  ),
                ),
-               const Text('طريقك إلى المليون', style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
+               Text('طريقك إلى المليون • نمط $selectedMode', style: const TextStyle(color: gold, fontWeight: FontWeight.bold)),
                Padding(
                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
                  child: Row(children: [
