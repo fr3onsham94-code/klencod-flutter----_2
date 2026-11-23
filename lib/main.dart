@@ -141,6 +141,21 @@ class _GameState extends State<Game> with SingleTickerProviderStateMixin {
               const Text('المليونير السوري', style: TextStyle(color: gold, fontSize: 27, fontWeight: FontWeight.w900)),
               const SizedBox(height: 8),
               const Text('اختر مستوى التحدي', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 18),
+              TextField(
+                controller: nameController,
+                textAlign: TextAlign.center,
+                textDirection: TextDirection.rtl,
+                textInputAction: TextInputAction.done,
+                decoration: InputDecoration(
+                  hintText: 'اكتب اسم اللاعب',
+                  filled: true,
+                  fillColor: panel,
+                  prefixIcon: const Icon(Icons.person, color: gold),
+                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: goldDark)),
+                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: gold, width: 2)),
+                ),
+              ),
               const SizedBox(height: 24),
               ...modes.map((m) => Padding(
                 padding: const EdgeInsets.only(bottom: 12),
