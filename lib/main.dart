@@ -53,7 +53,7 @@ Q('ما أكبر أقمار كوكب زحل؟',['أوروبا','غانيميد',
 Q('ما وحدة قياس المقاومة الكهربائية؟',['الفولت','الأوم','الأمبير','الكولوم'],1),
 Q('أي مضيق يصل البحر الأسود ببحر مرمرة؟',['الدردنيل','هرمز','البوسفور','جبل طارق'],2),
 Q('من رسم لوحة «مدرسة أثينا»؟',['رافائيل','دافنشي','ميكيلانجيلو','كارافاجيو'],0),
-Q('ما الاسم旧ي لعنصر الصوديوم في بعض اللغات ورمزه Na؟',['Natrium','Kalium','Argentum','Ferrum'],0),
+Q('ما الاسم اللاتيني لعنصر الصوديوم في بعض اللغات ورمزه Na؟',['Natrium','Kalium','Argentum','Ferrum'],0),
 Q('أي دولة تضم إقليم ترانسلفانيا التاريخي؟',['بلغاريا','رومانيا','المجر','صربيا'],1),
 Q('من العالم الذي صاغ مبدأ عدم اليقين؟',['نيلز بور','فيرنر هايزنبرغ','ماكس بلانك','إرفين شرودنغر'],1),
 Q('ما أعمق بحيرة في العالم؟',['فيكتوريا','بايكال','سوبيريور','تنغانيقا'],1),
@@ -89,7 +89,8 @@ class MillionaireApp extends StatelessWidget { const MillionaireApp({super.key})
 class Game extends StatefulWidget { const Game({super.key}); @override State<Game> createState()=>_GameState(); }
 class _GameState extends State<Game> with SingleTickerProviderStateMixin {
  int n=0,seconds=30,safe=0; int? selected,hidden,hiddenSecond; bool locked=false,over=false,fifty=false,audience=false,friend=false,won=false,started=false; String selectedMode='متوسط'; Timer? timer;
- List<Q> get questions => questionSets[selectedMode]!; late final pulse=AnimationController(vsync:this,duration:const Duration(milliseconds:900))..repeat(reverse:true);
+ List<Q> get questions => questionSets[selectedMode]!;
+ List<Q> get qs => questions; late final pulse=AnimationController(vsync:this,duration:const Duration(milliseconds:900))..repeat(reverse:true);
  @override void initState(){super.initState();}
  @override void dispose(){timer?.cancel();pulse.dispose();super.dispose();}
  void startClock(){timer?.cancel();seconds=30;timer=Timer.periodic(const Duration(seconds:1),(t){if(!mounted||locked||over){t.cancel();return;}setState(()=>seconds--);if(seconds<=0){t.cancel();finish(false);}});}
@@ -100,15 +101,117 @@ class _GameState extends State<Game> with SingleTickerProviderStateMixin {
  void cashOut(){if(over)return;timer?.cancel();setState((){over=true;locked=true;won=false;});showDialog(context:context,barrierDismissible:false,builder:(d)=>AlertDialog(backgroundColor:panel,title:const Text('انسحبت من المسابقة'),content:Text('مبروك! ربحت الجائزة المضمونة: '+money(safe)),actions:[FilledButton(onPressed:(){Navigator.pop(d);restart();},child:const Text('العب من جديد'))]));}
  void restart(){timer?.cancel();setState((){n=0;selected=null;hidden=null;hiddenSecond=null;safe=0;locked=false;over=false;fifty=false;audience=false;friend=false;won=false;started=false;});}
  void startGame(String mode){setState((){selectedMode=mode;n=0;selected=null;hidden=null;hiddenSecond=null;safe=0;locked=false;over=false;fifty=false;audience=false;friend=false;won=false;started=true;});startClock();}
- Widget modeSelection(){
-   final modes=[('سهل','بداية ممتعة وأسئلة مباشرة','assets',Icons.sentiment_satisfied_alt),('متوسط','معلومات عامة وتحدٍ متوازن','متوسط',Icons.lightbulb_outline),('صعب','اختبر معلوماتك بأقوى الأسئلة','خبير',Icons.workspace_premium),('الأطفال','أسئلة لطيفة وممتعة للصغار','مرح',Icons.child_care)];
-   return Scaffold(body:SafeArea(child:Stack(children:[Positioned.fill(child:CustomPaint(painter:StagePainter())),Center(child:SingleChildScrollView(padding:const EdgeInsets.all(22),child:Column(mainAxisAlignment:MainAxisAlignment.center,children:[const Icon(Icons.stars_rounded,color:gold,size:54),const SizedBox(height:8),const Text('المليونير السوري',style:TextStyle(color:gold,fontSize:27,fontWeight:FontWeight.w900)),const SizedBox(height:8),const Text('اختر مستوى التحدي',style:TextStyle(color:Colors.white,fontSize:18,fontWeight:FontWeight.bold)),const SizedBox(height:24),...modes.map((m)=>Padding(padding:const EdgeInsets.only(bottom:12),child:InkWell(borderRadius:BorderRadius.circular(18),onTap:()=>startGame(m.$1),child:Container(padding:const EdgeInsets.symmetric(horizontal:18,vertical:17),decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xFF1B4787),Color(0xFF091B3B)]),borderRadius:BorderRadius.circular(18),border:Border.all(color:goldDark,width:1.4),boxShadow:const [BoxShadow(color:Color(0x55000000),blurRadius:12,offset:Offset(0,5))]),child:Row(children:[Icon(m.$4,color:gold,size:31),const SizedBox(width:15),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(m.$1,style:const TextStyle(color:gold,fontSize:19,fontWeight:FontWeight.w900)),const SizedBox(height:4),Text(m.$2,style:const TextStyle(color:Colors.white70,fontSize:13))])),const Icon(Icons.arrow_back_ios_new,color:gold,size:18)]))))),const SizedBox(height:10),const Text('15 سؤالاً • ثلاث وسائل مساعدة • الجائزة الكبرى مليون',textAlign:TextAlign.center,style:TextStyle(color:Colors.white54,fontSize:12))])))]))));
- }
- void useFifty(){if(fifty||locked)return;final wrong=List.generate(4,(i)=>i).where((i)=>i!=qs[n].c).toList()..shuffle();setState((){fifty=true;hidden=wrong.take(2).first; hiddenSecond=wrong[1];});}
- void useAudience(){if(audience||locked)return;setState(()=>audience=true);final r=math.Random();final vals=List<int>.filled(4,0);final correct=65+r.nextInt(16);final wrong=[for(var i=0;i<4;i++) if(i!=qs[n].c)i]..shuffle();final remaining=100-correct;final first= r.nextInt(remaining+1);final second=r.nextInt(remaining-first+1);vals[qs[n].c]=correct;vals[wrong[0]]=first;vals[wrong[1]]=second;vals[wrong[2]]=remaining-first-second;showDialog(context:context,builder:(d)=>AlertDialog(backgroundColor:panel,title:const Text('تصويت الجمهور'),content:Column(mainAxisSize:MainAxisSize.min,children:List.generate(4,(i)=>Padding(padding:const EdgeInsets.all(5),child:Row(children:[Text(String.fromCharCode(65+i)),const SizedBox(width:8),Expanded(child:LinearProgressIndicator(value:vals[i]/100,minHeight:10,color:gold,backgroundColor:navy)),Text(' '+vals[i].toString()+'%')])))),actions:[TextButton(onPressed:()=>Navigator.pop(d),child:const Text('إغلاق'))]));}
- void useFriend(){if(friend||locked)return;setState(()=>friend=true);final c=qs[n].c;final g=math.Random().nextInt(100)<78?c:(c+1+math.Random().nextInt(3))%4;showDialog(context:context,builder:(d)=>AlertDialog(backgroundColor:panel,title:const Text('الاتصال بصديق'),content:Text('أعتقد أن الإجابة هي '+String.fromCharCode(65+g)+' — '+qs[n].a[g]),actions:[TextButton(onPressed:()=>Navigator.pop(d),child:const Text('شكراً'))]));}
- Color answerColor(int i){if(locked&&i==qs[n].c)return Colors.green.shade800;if(locked&&selected==i)return Colors.red.shade900;if(selected==i)return const Color(0xFF8C611D);return const Color(0xFF12366E);}
- @override
+ Widget modeSelection() {
+    final modes = <(String, String, IconData)>[
+      ('سهل', 'بداية ممتعة وأسئلة مباشرة', Icons.sentiment_satisfied_alt),
+      ('متوسط', 'معلومات عامة وتحدٍ متوازن', Icons.lightbulb_outline),
+      ('صعب', 'اختبر معلوماتك بأقوى الأسئلة', Icons.workspace_premium),
+      ('الأطفال', 'أسئلة لطيفة وممتعة للصغار', Icons.child_care),
+    ];
+    return Scaffold(
+      body: SafeArea(
+        child: Stack(children: [
+          Positioned.fill(child: CustomPaint(painter: StagePainter())),
+          Center(child: SingleChildScrollView(
+            padding: const EdgeInsets.all(22),
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              const Icon(Icons.stars_rounded, color: gold, size: 54),
+              const SizedBox(height: 8),
+              const Text('المليونير السوري', style: TextStyle(color: gold, fontSize: 27, fontWeight: FontWeight.w900)),
+              const SizedBox(height: 8),
+              const Text('اختر مستوى التحدي', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 24),
+              ...modes.map((m) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(18),
+                  onTap: () => startGame(m.$1),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 17),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(colors: [Color(0xFF1B4787), Color(0xFF091B3B)]),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: goldDark, width: 1.4),
+                    ),
+                    child: Row(children: [
+                      Icon(m.$3, color: gold, size: 31),
+                      const SizedBox(width: 15),
+                      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text(m.$1, style: const TextStyle(color: gold, fontSize: 19, fontWeight: FontWeight.w900)),
+                        const SizedBox(height: 4),
+                        Text(m.$2, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+                      ])),
+                      const Icon(Icons.arrow_back_ios_new, color: gold, size: 18),
+                    ]),
+                  ),
+                ),
+              )),
+              const SizedBox(height: 10),
+              const Text('15 سؤالاً • ثلاث وسائل مساعدة • الجائزة الكبرى مليون', textAlign: TextAlign.center, style: TextStyle(color: Colors.white54, fontSize: 12)),
+            ]),
+          )),
+        ]),
+      ),
+    );
+  }
+
+  void useFifty() {
+    if (fifty || locked) return;
+    final wrong = List<int>.generate(4, (i) => i).where((i) => i != qs[n].c).toList()..shuffle();
+    setState(() { fifty = true; hidden = wrong[0]; hiddenSecond = wrong[1]; });
+  }
+
+  void useAudience() {
+    if (audience || locked) return;
+    setState(() => audience = true);
+    final random = math.Random();
+    final vals = List<int>.filled(4, 0);
+    final correct = 65 + random.nextInt(16);
+    final wrong = <int>[for (var i = 0; i < 4; i++) if (i != qs[n].c) i]..shuffle();
+    final remaining = 100 - correct;
+    final first = random.nextInt(remaining + 1);
+    final second = random.nextInt(remaining - first + 1);
+    vals[qs[n].c] = correct;
+    vals[wrong[0]] = first;
+    vals[wrong[1]] = second;
+    vals[wrong[2]] = remaining - first - second;
+    showDialog(context: context, builder: (d) => AlertDialog(
+      backgroundColor: panel,
+      title: const Text('تصويت الجمهور'),
+      content: Column(mainAxisSize: MainAxisSize.min, children: List.generate(4, (i) => Padding(
+        padding: const EdgeInsets.all(5),
+        child: Row(children: [
+          Text(String.fromCharCode(65 + i)),
+          const SizedBox(width: 8),
+          Expanded(child: LinearProgressIndicator(value: vals[i] / 100, minHeight: 10, color: gold, backgroundColor: navy)),
+          Text(' ${vals[i]}%'),
+        ]),
+      ))),
+      actions: [TextButton(onPressed: () => Navigator.pop(d), child: const Text('إغلاق'))],
+    ));
+  }
+
+  void useFriend() {
+    if (friend || locked) return;
+    setState(() => friend = true);
+    final correct = qs[n].c;
+    final guess = math.Random().nextInt(100) < 78 ? correct : (correct + 1 + math.Random().nextInt(3)) % 4;
+    showDialog(context: context, builder: (d) => AlertDialog(
+      backgroundColor: panel,
+      title: const Text('الاتصال بصديق'),
+      content: Text('أعتقد أن الإجابة هي ${String.fromCharCode(65 + guess)} — ${qs[n].a[guess]}'),
+      actions: [TextButton(onPressed: () => Navigator.pop(d), child: const Text('شكراً'))],
+    ));
+  }
+
+  Color answerColor(int i) {
+    if (locked && i == qs[n].c) return Colors.green.shade800;
+    if (locked && selected == i) return Colors.red.shade900;
+    if (selected == i) return const Color(0xFF8C611D);
+    return const Color(0xFF12366E);
+  }
+
+@override
  Widget build(BuildContext context) {
    if(!started)return modeSelection();
    return Scaffold(
@@ -146,7 +249,7 @@ class _GameState extends State<Game> with SingleTickerProviderStateMixin {
                        onPressed: () => showDialog(context: context, builder: (d) => AlertDialog(
                          backgroundColor: panel,
                          title: const Text('قواعد اللعبة'),
-                         content: const Text('النمط: $selectedMode. 15 سؤالاً متدرجاً، 30 ثانية لكل سؤال، وثلاث وسائل مساعدة. يمكنك الانسحاب في أي وقت.'),
+                         content: Text('النمط: $selectedMode. 15 سؤالاً متدرجاً، 30 ثانية لكل سؤال، وثلاث وسائل مساعدة. يمكنك الانسحاب في أي وقت.'),
                          actions: [TextButton(onPressed: () => Navigator.pop(d), child: const Text('حسناً'))],
                        )),
                        icon: const Icon(Icons.help_outline, color: gold),
