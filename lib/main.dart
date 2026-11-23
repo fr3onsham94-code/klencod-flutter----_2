@@ -6,7 +6,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-void main(){ WidgetsFlutterBinding.ensureInitialized(); SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]); runApp(const MillionaireApp()); }
+void main(){ WidgetsFlutterBinding.ensureInitialized(); SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]); runApp(const MillionaireApp()); }
 
 const gold=Color(0xFFFFD56A), goldDark=Color(0xFFB98224), navy=Color(0xFF06132F), panel=Color(0xFF102B59), blue=Color(0xFF174A91);
 const prizes=[100,200,300,500,1000,2000,4000,8000,16000,32000,64000,125000,250000,500000,1000000];
@@ -267,156 +267,71 @@ class _GameState extends State<Game> with SingleTickerProviderStateMixin {
     return const Color(0xFF12366E);
   }
 
-@override
- Widget build(BuildContext context) {
-   if(!started)return modeSelection();
-   return Scaffold(
-     body: SafeArea(
-       child: Stack(
-         children: [
-           Positioned.fill(child: CustomPaint(painter: StagePainter())),
-           Column(
-             children: [
-               Padding(
-                 padding: const EdgeInsets.fromLTRB(14, 2, 8, 0),
-                 child: Row(
-                   children: [
-                     const Icon(Icons.stars, color: gold),
-                     const SizedBox(width: 8),
-                     const Expanded(child: Text('المليونير السوري', style: TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 18))),
-                     IconButton(
-                       onPressed: () => showDialog(context: context, builder: (d) => AlertDialog(
-                         backgroundColor: panel,
-                         title: const Text('سُلّم الجوائز'),
-                         content: SizedBox(width: double.maxFinite, height: 360, child: ListView.builder(
-                           reverse: true,
-                           itemCount: prizes.length,
-                           itemBuilder: (c, i) => ListTile(
-                             dense: true,
-                             title: Text((i + 1).toString() + '. ' + money(prizes[i]), textAlign: TextAlign.end,
-                               style: TextStyle(color: i == n ? gold : (i == 4 || i == 9 ? gold : Colors.white70))),
-                           ),
-                         )),
-                         actions: [TextButton(onPressed: () => Navigator.pop(d), child: const Text('إغلاق'))],
-                       )),
-                       icon: const Icon(Icons.military_tech, color: gold),
-                     ),
-                     IconButton(
-                       onPressed: () => showDialog(context: context, builder: (d) => AlertDialog(
-                         backgroundColor: panel,
-                         title: const Text('قواعد اللعبة'),
-                         content: Text('النمط: $selectedMode. 15 سؤالاً متدرجاً، 30 ثانية لكل سؤال، وثلاث وسائل مساعدة. يمكنك الانسحاب في أي وقت.'),
-                         actions: [TextButton(onPressed: () => Navigator.pop(d), child: const Text('حسناً'))],
-                       )),
-                       icon: const Icon(Icons.help_outline, color: gold),
-                     ),
-                   ],
-                 ),
-               ),
-               const SizedBox(height: 2),
-               AnimatedBuilder(
-                 animation: pulse,
-                 builder: (c, w) => Transform.scale(scale: 1 + pulse.value * .025, child: w),
-                 child: Container(
-                   width: 62, height: 62,
-                   decoration: const BoxDecoration(shape: BoxShape.circle,
-                     gradient: RadialGradient(colors: [Color(0xFFFFE9B0), Color(0xFFB98224)]),
-                     boxShadow: [BoxShadow(color: Color(0x667F5A1D), blurRadius: 18)]),
-                   child: const Icon(Icons.workspace_premium, color: navy, size: 40),
-                 ),
-               ),
-               Text('اللاعب: $playerName  •  طريقك إلى المليون • نمط $selectedMode', textAlign:TextAlign.center, style: const TextStyle(color: gold, fontWeight: FontWeight.bold)),
-               Padding(
-                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                 child: Row(children: [
-                   life('50:50', fifty, useFifty),
-                   const SizedBox(width: 7),
-                   life('الجمهور', audience, useAudience),
-                   const SizedBox(width: 7),
-                   life('صديق', friend, useFriend),
-                 ]),
-               ),
-               Container(
-                 width: 54, height: 54, alignment: Alignment.center,
-                 decoration: BoxDecoration(shape: BoxShape.circle, color: panel,
-                   border: Border.all(color: seconds <= 8 ? Colors.red : gold, width: 3)),
-                 child: Text(seconds.toString(), style: TextStyle(color: seconds <= 8 ? Colors.red : gold, fontWeight: FontWeight.w900, fontSize: 23)),
-               ),
-               const SizedBox(height: 9),
-               Container(
-                 margin: const EdgeInsets.symmetric(horizontal: 14),
-                 padding: const EdgeInsets.all(14),
-                 decoration: BoxDecoration(
-                   gradient: const LinearGradient(colors: [Color(0xFF1B4787), Color(0xFF091B3B)]),
-                   borderRadius: BorderRadius.circular(17), border: Border.all(color: goldDark, width: 1.4)),
-                 child: Column(children: [
-                   Text('السؤال ' + (n + 1).toString() + ' من 15', style: const TextStyle(color: gold, fontWeight: FontWeight.bold)),
-                   const SizedBox(height: 8),
-                   Text(qs[n].q, textAlign: TextAlign.center,
-                     style: const TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.bold)),
-                 ]),
-               ),
-               const SizedBox(height: 10),
-               Expanded(
-                 child: Padding(
-                   padding: const EdgeInsets.symmetric(horizontal: 14),
-                   child: Column(
-                     children: List.generate(4, (i) => Expanded(
-                       child: Padding(
-                         padding: const EdgeInsets.only(bottom: 7),
-                         child: InkWell(
-                           borderRadius: BorderRadius.circular(14),
-                           onTap: () => choose(i),
-                           child: AnimatedContainer(
-                             duration: const Duration(milliseconds: 180),
-                             width: double.infinity,
-                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                             decoration: BoxDecoration(
-                               color: (hidden == i || hiddenSecond == i) ? Colors.transparent : answerColor(i),
-                               borderRadius: BorderRadius.circular(14),
-                               border: Border.all(color: selected == i ? gold : goldDark, width: selected == i ? 2 : 1)),
-                             child: Row(children: [
-                               CircleAvatar(radius: 15, backgroundColor: gold.withOpacity(.15),
-                                 child: Text(String.fromCharCode(65 + i), style: const TextStyle(color: gold, fontWeight: FontWeight.bold))),
-                               const SizedBox(width: 12),
-                               Expanded(child: Text((hidden == i || hiddenSecond == i) ? '' : qs[n].a[i],
-                                 textAlign: TextAlign.center,
-                                 style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600))),
-                               const SizedBox(width: 27),
-                             ]),
-                           ),
-                         ),
-                       ),
-                     )),
-                   ),
-                 ),
-               ),
-               Padding(
-                 padding: const EdgeInsets.fromLTRB(14, 0, 14, 10),
-                 child: Row(children: [
-                   Expanded(child: OutlinedButton.icon(
-                     onPressed: cashOut,
-                     icon: const Icon(Icons.flag_outlined),
-                     label: const Text('انسحاب'),
-                     style: OutlinedButton.styleFrom(foregroundColor: gold, side: const BorderSide(color: goldDark), padding: const EdgeInsets.symmetric(vertical: 12)),
-                   )),
-                   const SizedBox(width: 10),
-                   Expanded(flex: 2, child: FilledButton.icon(
-                     onPressed: selected == null || locked ? null : confirm,
-                     icon: const Icon(Icons.check_circle_outline),
-                     label: const Text('تأكيد الإجابة'),
-                     style: FilledButton.styleFrom(backgroundColor: goldDark, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 12)),
-                   )),
-                 ]),
-               ),
-             ],
-           ),
-         ],
-       ),
-     ),
-   );
+ Widget studioBanner(double h)=>ClipRRect(borderRadius:BorderRadius.circular(16),child:SizedBox(height:h,width:double.infinity,child:Stack(fit:StackFit.expand,children:[
+ Image.memory(base64Decode(presentersImageBase64),fit:BoxFit.cover),
+ DecoratedBox(decoration:BoxDecoration(gradient:LinearGradient(begin:Alignment.topCenter,end:Alignment.bottomCenter,colors:[Colors.transparent,navy.withOpacity(.9)]))),
+ Positioned(right:12,left:12,bottom:8,child:Column(crossAxisAlignment:CrossAxisAlignment.end,children:[
+ const Text('المليونير السوري',style:TextStyle(color:gold,fontSize:19,fontWeight:FontWeight.w900)),
+ Text('مع $playerName  •  نمط $selectedMode',style:const TextStyle(color:Colors.white,fontWeight:FontWeight.w600))]))])));
+ Widget timerBadge(double z)=>Container(width:z,height:z,alignment:Alignment.center,decoration:BoxDecoration(shape:BoxShape.circle,
+ gradient:const RadialGradient(colors:[Color(0xFF173F76),navy]),border:Border.all(color:seconds<=8?Colors.redAccent:gold,width:3),
+ boxShadow:const [BoxShadow(color:Color(0x557F5A1D),blurRadius:12)]),
+ child:Text('$seconds',style:TextStyle(color:seconds<=8?Colors.redAccent:gold,fontWeight:FontWeight.w900,fontSize:z*.38)));
+ Widget prizeRail({bool compact=false})=>Container(width:compact?108:null,padding:const EdgeInsets.all(7),
+ decoration:BoxDecoration(color:const Color(0xCC081A38),borderRadius:BorderRadius.circular(13),border:Border.all(color:goldDark)),
+ child:Column(mainAxisSize:MainAxisSize.min,children:[const Text('سُلّم الجوائز',style:TextStyle(color:gold,fontWeight:FontWeight.w900,fontSize:12)),
+ ...List.generate(prizes.length,(i){final k=prizes.length-1-i;final active=k==n,safePoint=k==4||k==9;
+ return Container(margin:const EdgeInsets.symmetric(vertical:1),padding:const EdgeInsets.symmetric(horizontal:4,vertical:2),
+ decoration:BoxDecoration(color:active?gold.withOpacity(.2):Colors.transparent,borderRadius:BorderRadius.circular(4),border:active?Border.all(color:gold):null),
+ child:Row(children:[if(safePoint)const Icon(Icons.shield_moon,color:gold,size:10),Expanded(child:Text(money(prizes[k]),textAlign:TextAlign.end,
+ style:TextStyle(color:active||safePoint?gold:Colors.white54,fontWeight:active||safePoint?FontWeight.w900:FontWeight.normal,fontSize:compact?9:11)))]));})]));
+ Widget questionCard({bool compact=false})=>Container(padding:EdgeInsets.all(compact?10:14),
+ decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xFF1B4787),Color(0xFF091B3B)]),borderRadius:BorderRadius.circular(17),
+ border:Border.all(color:goldDark,width:1.5),boxShadow:const [BoxShadow(color:Color(0x55000000),blurRadius:12,offset:Offset(0,4))]),
+ child:Column(children:[Text('السؤال \${n+1} من 15',style:const TextStyle(color:gold,fontWeight:FontWeight.w900)),const SizedBox(height:6),
+ Text(qs[n].q,textAlign:TextAlign.center,style:TextStyle(color:Colors.white,fontSize:compact?16:19,fontWeight:FontWeight.w800))]));
+ Widget answerButton(int i,{bool compact=false})=>InkWell(borderRadius:BorderRadius.circular(12),onTap:()=>choose(i),
+ child:AnimatedContainer(duration:const Duration(milliseconds:180),padding:EdgeInsets.symmetric(horizontal:10,vertical:compact?6:10),
+ decoration:BoxDecoration(gradient:LinearGradient(colors:[(hidden==i||hiddenSecond==i)?navy:answerColor(i),const Color(0xFF071A37)]),
+ borderRadius:BorderRadius.circular(12),border:Border.all(color:selected==i?gold:goldDark,width:selected==i?2:1)),
+ child:Row(children:[CircleAvatar(radius:compact?12:15,backgroundColor:gold.withOpacity(.16),child:Text(String.fromCharCode(65+i),
+ style:TextStyle(color:gold,fontWeight:FontWeight.w900,fontSize:compact?11:13))),const SizedBox(width:10),
+ Expanded(child:Text((hidden==i||hiddenSecond==i)?'':qs[n].a[i],textAlign:TextAlign.center,
+ style:TextStyle(color:Colors.white,fontSize:compact?13:15,fontWeight:FontWeight.w600))),const SizedBox(width:8)])));
+ Widget lifelines({bool vertical=false})=>vertical?Column(children:[life('50:50',fifty,useFifty),life('الجمهور',audience,useAudience),life('صديق',friend,useFriend)])
+ :Row(children:[Expanded(child:life('50:50',fifty,useFifty)),const SizedBox(width:6),Expanded(child:life('الجمهور',audience,useAudience)),
+ const SizedBox(width:6),Expanded(child:life('صديق',friend,useFriend))]);
+ Widget actionsRow({bool compact=false})=>Row(children:[
+ Expanded(child:OutlinedButton.icon(onPressed:cashOut,icon:const Icon(Icons.flag_outlined,size:18),label:const Text('انسحاب'),
+ style:OutlinedButton.styleFrom(foregroundColor:gold,side:const BorderSide(color:goldDark),padding:EdgeInsets.symmetric(vertical:compact?6:10)))),
+ const SizedBox(width:8),Expanded(flex:2,child:FilledButton.icon(onPressed:selected==null||locked?null:confirm,icon:const Icon(Icons.check_circle_outline,size:18),
+ label:const Text('تأكيد الإجابة'),style:FilledButton.styleFrom(backgroundColor:goldDark,foregroundColor:Colors.white,padding:EdgeInsets.symmetric(vertical:compact?6:10))))]);
+ @override Widget build(BuildContext context){
+ if(!started)return modeSelection();
+ return Scaffold(body:SafeArea(child:LayoutBuilder(builder:(context,c){final landscape=c.maxWidth>c.maxHeight;
+ return Stack(children:[Positioned.fill(child:CustomPaint(painter:StagePainter())),
+ if(landscape)Padding(padding:const EdgeInsets.all(9),child:Row(children:[
+ SizedBox(width:112,child:Column(children:[timerBadge(56),const SizedBox(height:9),Expanded(child:lifelines(vertical:true))])),
+ const SizedBox(width:8),Expanded(child:Column(children:[SizedBox(height:82,child:studioBanner(82)),
+ Align(alignment:Alignment.centerRight,child:Text('اللاعب: $playerName',style:const TextStyle(color:gold,fontSize:12,fontWeight:FontWeight.bold))),
+ questionCard(compact:true),const SizedBox(height:5),
+ Expanded(child:Column(children:List.generate(4,(i)=>Expanded(child:Padding(padding:const EdgeInsets.only(bottom:4),child:answerButton(i,compact:true)))))),
+ actionsRow(compact:true)])),const SizedBox(width:8),SizedBox(width:108,child:prizeRail(compact:true))]))
+ else Padding(padding:const EdgeInsets.fromLTRB(11,7,11,8),child:Column(children:[
+ studioBanner(112),Row(children:[Expanded(child:Text('اللاعب: $playerName  •  $selectedMode',style:const TextStyle(color:gold,fontSize:12,fontWeight:FontWeight.w800))),
+ timerBadge(46),IconButton(onPressed:()=>showRules(context),icon:const Icon(Icons.help_outline,color:gold))]),
+ lifelines(),const SizedBox(height:6),questionCard(),const SizedBox(height:7),
+ Expanded(child:Column(children:List.generate(4,(i)=>Expanded(child:Padding(padding:const EdgeInsets.only(bottom:6),child:answerButton(i)))))),
+ Row(children:[const Text('سُلّم الجوائز',style:TextStyle(color:gold,fontSize:11,fontWeight:FontWeight.bold)),const SizedBox(width:8),
+ Expanded(child:Text(prizes.map(money).join('  •  '),maxLines:1,overflow:TextOverflow.fade,softWrap:false,style:const TextStyle(color:Colors.white54,fontSize:9))),
+ IconButton(constraints:const BoxConstraints.tightFor(width:28,height:26),padding:EdgeInsets.zero,
+ onPressed:()=>showDialog(context:context,builder:(d)=>AlertDialog(backgroundColor:panel,title:const Text('سُلّم الجوائز'),
+ content:SizedBox(width:double.maxFinite,height:360,child:prizeRail()),actions:[TextButton(onPressed:()=>Navigator.pop(d),child:const Text('إغلاق'))])),
+ icon:const Icon(Icons.list_alt,color:gold,size:19))]),actionsRow()]))]);})));
  }
-
+ void showRules(BuildContext context)=>showDialog(context:context,builder:(d)=>AlertDialog(backgroundColor:panel,title:const Text('قواعد اللعبة'),
+ content:Text('النمط: $selectedMode. 15 سؤالاً متدرجاً، 30 ثانية لكل سؤال، وثلاث وسائل مساعدة. يمكنك الانسحاب في أي وقت.'),
+ actions:[TextButton(onPressed:()=>Navigator.pop(d),child:const Text('حسناً'))]));
  Widget life(String text, bool used, VoidCallback action) => Expanded(
    child: OutlinedButton(
      onPressed: used || locked ? null : action,
