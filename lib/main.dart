@@ -95,6 +95,27 @@ class _GameState extends State<Game> with SingleTickerProviderStateMixin {
  @override void dispose(){timer?.cancel();nameController.dispose();pulse.dispose();super.dispose();}
  void startClock(){timer?.cancel();seconds=30;timer=Timer.periodic(const Duration(seconds:1),(t){if(!mounted||locked||over){t.cancel();return;}setState(()=>seconds--);if(seconds<=0){t.cancel();finish(false);}});}
  String money(int v)=>v.toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'),(m)=>m[1]!+',');
+ String amountInWords(int v){
+   const words=<int,String>{100:'مئة',200:'مئتا',300:'ثلاثمئة',500:'خمسمئة',1000:'ألف',2000:'ألفان',4000:'أربعة آلاف',8000:'ثمانية آلاف',16000:'ستة عشر ألفاً',32000:'اثنان وثلاثون ألفاً',64000:'أربعة وستون ألفاً',125000:'مئة وخمسة وعشرون ألفاً',250000:'مئتان وخمسون ألفاً',500000:'خمسمئة ألف',1000000:'مليون'};
+   return '${words[v]??v.toString()} من نقاط الجائزة';
+ }
+ Widget prizeCheck(int amount)=>Container(
+   width:double.infinity,padding:const EdgeInsets.all(16),
+   decoration:BoxDecoration(color:const Color(0xFFF8F1DA),borderRadius:BorderRadius.circular(14),border:Border.all(color:goldDark,width:2)),
+   child:Column(mainAxisSize:MainAxisSize.min,children:[
+     const Icon(Icons.workspace_premium,color:goldDark,size:38),
+     const Text('شيك جائزة — المليونير السوري',textAlign:TextAlign.center,style:TextStyle(color:navy,fontWeight:FontWeight.w900,fontSize:17)),
+     const Divider(color:goldDark),
+     Text('يُمنح إلى: ${playerName.isEmpty?'اللاعب':playerName}',textAlign:TextAlign.center,style:const TextStyle(color:navy,fontWeight:FontWeight.bold,fontSize:16)),
+     const SizedBox(height:10),
+     Text(money(amount),style:const TextStyle(color:Color(0xFF9A6A16),fontWeight:FontWeight.w900,fontSize:28)),
+     Text(amountInWords(amount),textAlign:TextAlign.center,style:const TextStyle(color:navy,fontSize:14)),
+     const SizedBox(height:8),
+     const Text('مع أطيب التهاني والفوز المستحق',style:TextStyle(color:navy,fontStyle:FontStyle.italic)),
+     const Divider(color:goldDark),
+     const Text('إدارة المسابقة',style:TextStyle(color:navy,fontWeight:FontWeight.bold))
+   ])
+ );
  void choose(int i){if(locked||over||(hidden==i || hiddenSecond==i))return;setState(()=>selected=i);HapticFeedback.selectionClick();}
  Future<void> confirm() async {if(selected==null||locked)return;timer?.cancel();setState(()=>locked=true);await Future.delayed(const Duration(milliseconds:850));if(!mounted)return;if(selected==questions[n].c){if(n==4||n==9)safe=prizes[n];if(n==14){finish(true);return;}setState(()=>n++);selected=null;hidden=null;hiddenSecond=null;locked=false;startClock();}else{finish(false);}}
  void finish(bool win){timer?.cancel();setState((){over=true;won=win;locked=true;});showDialog(context:context,barrierDismissible:false,builder:(d)=>AlertDialog(backgroundColor:panel,title:Text(win?'مبروك! ربحت المليون':'انتهت المسابقة'),content:Column(mainAxisSize:MainAxisSize.min,children:[Text(win?'أصبحت مليونيراً سورياً!':'الجائزة المضمونة: '+money(safe)),const SizedBox(height:12),prizeCheck(win?1000000:safe)]),actions:[FilledButton(onPressed:(){Navigator.pop(d);restart();},child:const Text('العب من جديد'))]));}
