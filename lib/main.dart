@@ -88,19 +88,19 @@ class MillionaireApp extends StatelessWidget { const MillionaireApp({super.key})
 
 class Game extends StatefulWidget { const Game({super.key}); @override State<Game> createState()=>_GameState(); }
 class _GameState extends State<Game> with SingleTickerProviderStateMixin {
- int n=0,seconds=30,safe=0; int? selected,hidden,hiddenSecond; bool locked=false,over=false,fifty=false,audience=false,friend=false,won=false,started=false; String selectedMode='متوسط'; Timer? timer;
+ int n=0,seconds=30,safe=0; int? selected,hidden,hiddenSecond; bool locked=false,over=false,fifty=false,audience=false,friend=false,won=false,started=false; String selectedMode='متوسط'; String playerName=''; final TextEditingController nameController=TextEditingController(); Timer? timer;
  List<Q> get questions => questionSets[selectedMode]!;
  List<Q> get qs => questions; late final pulse=AnimationController(vsync:this,duration:const Duration(milliseconds:900))..repeat(reverse:true);
  @override void initState(){super.initState();}
- @override void dispose(){timer?.cancel();pulse.dispose();super.dispose();}
+ @override void dispose(){timer?.cancel();nameController.dispose();pulse.dispose();super.dispose();}
  void startClock(){timer?.cancel();seconds=30;timer=Timer.periodic(const Duration(seconds:1),(t){if(!mounted||locked||over){t.cancel();return;}setState(()=>seconds--);if(seconds<=0){t.cancel();finish(false);}});}
  String money(int v)=>v.toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'),(m)=>m[1]!+',');
  void choose(int i){if(locked||over||(hidden==i || hiddenSecond==i))return;setState(()=>selected=i);HapticFeedback.selectionClick();}
  Future<void> confirm() async {if(selected==null||locked)return;timer?.cancel();setState(()=>locked=true);await Future.delayed(const Duration(milliseconds:850));if(!mounted)return;if(selected==questions[n].c){if(n==4||n==9)safe=prizes[n];if(n==14){finish(true);return;}setState(()=>n++);selected=null;hidden=null;hiddenSecond=null;locked=false;startClock();}else{finish(false);}}
- void finish(bool win){timer?.cancel();setState((){over=true;won=win;locked=true;});showDialog(context:context,barrierDismissible:false,builder:(d)=>AlertDialog(backgroundColor:panel,title:Text(win?'مبروك! ربحت المليون':'انتهت المسابقة'),content:Text(win?'أصبحت مليونيراً سورياً!':'الجائزة المضمونة: '+money(safe)),actions:[FilledButton(onPressed:(){Navigator.pop(d);restart();},child:const Text('العب من جديد'))]));}
- void cashOut(){if(over)return;timer?.cancel();setState((){over=true;locked=true;won=false;});showDialog(context:context,barrierDismissible:false,builder:(d)=>AlertDialog(backgroundColor:panel,title:const Text('انسحبت من المسابقة'),content:Text('مبروك! ربحت الجائزة المضمونة: '+money(safe)),actions:[FilledButton(onPressed:(){Navigator.pop(d);restart();},child:const Text('العب من جديد'))]));}
+ void finish(bool win){timer?.cancel();setState((){over=true;won=win;locked=true;});showDialog(context:context,barrierDismissible:false,builder:(d)=>AlertDialog(backgroundColor:panel,title:Text(win?'مبروك! ربحت المليون':'انتهت المسابقة'),content:Column(mainAxisSize:MainAxisSize.min,children:[Text(win?'أصبحت مليونيراً سورياً!':'الجائزة المضمونة: '+money(safe)),const SizedBox(height:12),prizeCheck(win?1000000:safe)]),actions:[FilledButton(onPressed:(){Navigator.pop(d);restart();},child:const Text('العب من جديد'))]));}
+ void cashOut(){if(over)return;timer?.cancel();setState((){over=true;locked=true;won=false;});showDialog(context:context,barrierDismissible:false,builder:(d)=>AlertDialog(backgroundColor:panel,title:const Text('انسحبت من المسابقة'),content:Column(mainAxisSize:MainAxisSize.min,children:[Text('مبروك! ربحت الجائزة المضمونة: '+money(safe)),const SizedBox(height:12),prizeCheck(safe)]),actions:[FilledButton(onPressed:(){Navigator.pop(d);restart();},child:const Text('العب من جديد'))]));}
  void restart(){timer?.cancel();setState((){n=0;selected=null;hidden=null;hiddenSecond=null;safe=0;locked=false;over=false;fifty=false;audience=false;friend=false;won=false;started=false;});}
- void startGame(String mode){setState((){selectedMode=mode;n=0;selected=null;hidden=null;hiddenSecond=null;safe=0;locked=false;over=false;fifty=false;audience=false;friend=false;won=false;started=true;});startClock();}
+ void startGame(String mode){final entered=nameController.text.trim();if(entered.isEmpty){ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('اكتب اسم اللاعب أولاً')));return;}setState((){playerName=entered;selectedMode=mode;n=0;selected=null;hidden=null;hiddenSecond=null;safe=0;locked=false;over=false;fifty=false;audience=false;friend=false;won=false;started=true;});startClock();}
  Widget modeSelection() {
     final modes = <(String, String, IconData)>[
       ('سهل', 'بداية ممتعة وأسئلة مباشرة', Icons.sentiment_satisfied_alt),
@@ -269,7 +269,7 @@ class _GameState extends State<Game> with SingleTickerProviderStateMixin {
                    child: const Icon(Icons.workspace_premium, color: navy, size: 40),
                  ),
                ),
-               Text('طريقك إلى المليون • نمط $selectedMode', style: const TextStyle(color: gold, fontWeight: FontWeight.bold)),
+               Text('اللاعب: $playerName  •  طريقك إلى المليون • نمط $selectedMode', textAlign:TextAlign.center, style: const TextStyle(color: gold, fontWeight: FontWeight.bold)),
                Padding(
                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
                  child: Row(children: [
