@@ -288,7 +288,7 @@ class _GameState extends State<Game> with SingleTickerProviderStateMixin {
  Widget questionCard({bool compact=false})=>Container(padding:EdgeInsets.all(compact?10:14),
  decoration:BoxDecoration(gradient:const LinearGradient(colors:[Color(0xFF1B4787),Color(0xFF091B3B)]),borderRadius:BorderRadius.circular(17),
  border:Border.all(color:goldDark,width:1.5),boxShadow:const [BoxShadow(color:Color(0x55000000),blurRadius:12,offset:Offset(0,4))]),
- child:Column(children:[Text('السؤال \${n+1} من 15',style:const TextStyle(color:gold,fontWeight:FontWeight.w900)),const SizedBox(height:6),
+ child:Column(children:[Text('السؤال ${n+1} من 15',style:const TextStyle(color:gold,fontWeight:FontWeight.w900)),const SizedBox(height:6),
  Text(qs[n].q,textAlign:TextAlign.center,style:TextStyle(color:Colors.white,fontSize:compact?16:19,fontWeight:FontWeight.w800))]));
  Widget answerButton(int i,{bool compact=false})=>InkWell(borderRadius:BorderRadius.circular(12),onTap:()=>choose(i),
  child:AnimatedContainer(duration:const Duration(milliseconds:180),padding:EdgeInsets.symmetric(horizontal:10,vertical:compact?6:10),
